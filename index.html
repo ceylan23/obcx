@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fluent Traffic - 欧本终端</title>
+    <style>
+        :root {
+            /* 微软多巴胺色板 */
+            --fluent-accent: #0078D4; /* 经典 Win11 蓝 */
+            --dopamine-pink: #FF0078;
+            --dopamine-orange: #FF5F00;
+            --dopamine-yellow: #FDB913;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --mica-effect: rgba(243, 243, 243, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, sans-serif; }
+
+        body {
+            /* 微软极光渐变背景 */
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(255, 0, 120, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, rgba(255, 150, 0, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(0, 120, 212, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(175, 82, 222, 0.5) 0%, transparent 50%),
+                #f3f3f3;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px 100px 20px;
+            overflow-y: auto;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            animation: fluent-entrance 1s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        @keyframes fluent-entrance {
+            from { opacity: 0; transform: scale(0.92) translateY(30px); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+
+        /* 微软亚克力卡片 */
+        .fluent-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            border-radius: 12px; /* Win11 标准圆角 */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 顶部装饰条 */
+        .fluent-card::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--dopamine-pink), var(--dopamine-yellow));
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .title-group h1 { font-size: 20px; font-weight: 600; color: #000; letter-spacing: -0.3px; }
+        .title-group p { font-size: 12px; color: #616161; margin-top: 2px; }
+
+        /* 环形进度条 - 微软风格更倾向于细线与科技感 */
+        .visual-area { position: relative; width: 220px; height: 220px; margin: 0 auto 30px; }
+        svg { transform: rotate(-90deg); }
+        .circle-track { fill: none; stroke: rgba(0,0,0,0.05); stroke-width: 8; }
+        .circle-fill {
+            fill: none;
+            stroke: var(--fluent-accent);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 565;
+            stroke-dashoffset: 565;
+            transition: stroke-dashoffset 2s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .data-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .remain-val { font-size: 48px; font-weight: 700; color: #000; line-height: 1; }
+        .remain-label { font-size: 13px; color: #616161; font-weight: 500; margin-top: 5px; }
+
+        /* 统计区块 */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 16px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
+        }
+        .stat-box:hover { background: rgba(255, 255, 255, 0.6); transform: translateY(-2px); }
+        .stat-label { font-size: 11px; font-weight: 600; color: #616161; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .stat-num { font-size: 16px; font-weight: 700; color: #000; }
+
+        /* 按钮 - 微软标准样式 */
+        .fluent-btn {
+            width: 100%; margin-top: 20px; padding: 10px;
+            background: var(--fluent-accent); color: white;
+            border: none; border-radius: 4px; font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .fluent-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .fluent-btn:active { transform: scale(0.98); filter: brightness(0.9); }
+
+        /* 加载动画 */
+        .loading-overlay {
+            position: absolute; inset: 0; background: var(--mica-effect);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; transition: 0.5s;
+        }
+        .win-spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(0, 120, 212, 0.2);
+            border-top-color: var(--fluent-accent); border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .footer { margin-top: 24px; text-align: center; font-size: 11px; color: #616161; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="fluent-card">
+        <div id="loader" class="loading-overlay">
+            <div class="win-spinner"></div>
+            <p style="margin-top: 15px; font-size: 13px; font-weight: 500; color: var(--fluent-accent);">同步 Windows 云端数据...</p>
+        </div>
+
+        <div class="header">
+            <div class="title-group">
+                <h1>流量仪表盘</h1>
+                <p>设备 ID: 8681700102</p>
+            </div>
+            <div id="statusDot" style="display: flex; align-items: center; font-size: 12px; font-weight: 600;">
+                <span style="width: 8px; height: 8px; background: #107c10; border-radius: 50%; margin-right: 6px;"></span>
+                在线
+            </div>
+        </div>
+
+        <div class="visual-area">
+            <svg viewBox="0 0 200 200">
+                <circle class="circle-track" cx="100" cy="100" r="90"></circle>
+                <circle id="ring" class="circle-fill" cx="100" cy="100" r="90"></circle>
+            </svg>
+            <div class="data-overlay">
+                <div id="remainVal" class="remain-val">0.00</div>
+                <div class="remain-label">剩余 GB</div>
+            </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-box">
+                <span class="stat-label">套餐总量</span>
+                <span id="totalVal" class="stat-num">-- GB</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">已使用</span>
+                <span id="usedVal" class="stat-num">-- GB</span>
+            </div>
+            <div class="stat-box" style="grid-column: span 2;">
+                <span class="stat-label">到期时间</span>
+                <span id="expireVal" class="stat-num">----/--/--</span>
+            </div>
+        </div>
+
+        <button class="fluent-btn" onclick="location.reload()">同步最新状态</button>
+    </div>
+
+    <div class="footer">
+        <p>© 2026 Eugene. Designed with Fluent Design.</p>
+    </div>
+</div>
+
+<script>
+    const CONFIG = {
+        devNo: '8681700102',
+        apiUrl: 'http://rang.xuanrangiot.cn/api/card/intelligentDetection'
+    };
+
+    function init() {
+        const callbackName = `fluent_cb_${Date.now()}`;
+        window[callbackName] = function(res) {
+            handleData(res);
+            delete window[callbackName];
+            document.body.removeChild(script);
+        };
+
+        const script = document.createElement('script');
+        script.src = `${CONFIG.apiUrl}?dev_no=${CONFIG.devNo}&callback=${callbackName}`;
+        document.body.appendChild(script);
+    }
+
+    function handleData(res) {
+        document.getElementById('loader').style.opacity = '0';
+        setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+
+        if (res.code === 1 && res.data) {
+            const d = res.data;
+            const total = (d.totalAmount / 1024) || 0;
+            const remain = (d.remainAmount || d.surplus || 0) / 1024;
+            const used = total - remain;
+            const percent = total > 0 ? (remain / total) : 0;
+
+            // UI 更新
+            document.getElementById('totalVal').innerText = total.toFixed(2) + ' GB';
+            document.getElementById('usedVal').innerText = used.toFixed(2) + ' GB';
+            document.getElementById('expireVal').innerText = d.expiretime ? d.expiretime.split(' ')[0] : '--';
+            
+            // 滚动数字
+            animateValue("remainVal", 0, remain, 1500);
+
+            // 进度环 (565 是周长)
+            const ring = document.getElementById('ring');
+            ring.style.strokeDashoffset = 565 - (percent * 565);
+        }
+    }
+
+    function animateValue(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = (progress * (end - start) + start).toFixed(2);
+            if (progress < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
