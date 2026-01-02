@@ -3,146 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fluent Traffic - 欧本终端</title>
+    <title>流量终端 - Fluent Design</title>
     <style>
         :root {
-            /* 微软多巴胺色板 */
-            --fluent-accent: #0078D4; /* 经典 Win11 蓝 */
-            --dopamine-pink: #FF0078;
-            --dopamine-orange: #FF5F00;
-            --dopamine-yellow: #FDB913;
+            --fluent-accent: #0078D4;
+            --mica-bg: rgba(243, 243, 243, 0.85);
             --card-bg: rgba(255, 255, 255, 0.7);
-            --mica-effect: rgba(243, 243, 243, 0.8);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; }
 
         body {
-            /* 微软极光渐变背景 */
-            background: 
-                radial-gradient(circle at 0% 0%, rgba(255, 0, 120, 0.5) 0%, transparent 50%),
-                radial-gradient(circle at 100% 0%, rgba(255, 150, 0, 0.5) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(0, 120, 212, 0.5) 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, rgba(175, 82, 222, 0.5) 0%, transparent 50%),
-                #f3f3f3;
+            background: radial-gradient(circle at 0% 0%, rgba(255, 0, 120, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, rgba(0, 120, 212, 0.3) 0%, transparent 50%), #f3f3f3;
             background-attachment: fixed;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 40px 20px 100px 20px;
-            overflow-y: auto;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding: 40px 20px 100px 20px; overflow-y: auto;
         }
 
-        .container {
-            width: 100%;
-            max-width: 400px;
-            animation: fluent-entrance 1s cubic-bezier(0.1, 0.9, 0.2, 1);
-        }
+        .container { width: 100%; max-width: 400px; animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fluent-entrance {
-            from { opacity: 0; transform: scale(0.92) translateY(30px); filter: blur(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        }
-
-        /* 微软亚克力卡片 */
+        /* 亚克力卡片 */
         .fluent-card {
             background: var(--card-bg);
             backdrop-filter: blur(30px) saturate(150%);
             -webkit-backdrop-filter: blur(30px) saturate(150%);
-            border-radius: 12px; /* Win11 标准圆角 */
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 顶部装饰条 */
-        .fluent-card::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(90deg, var(--dopamine-pink), var(--dopamine-yellow));
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            padding: 24px; position: relative; overflow: hidden;
         }
 
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-        .title-group h1 { font-size: 20px; font-weight: 600; color: #000; letter-spacing: -0.3px; }
-        .title-group p { font-size: 12px; color: #616161; margin-top: 2px; }
+        .header h1 { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+        
+        /* 配置图标按钮 */
+        .config-btn { background: none; border: none; cursor: pointer; color: #616161; font-size: 20px; padding: 5px; }
 
-        /* 环形进度条 - 微软风格更倾向于细线与科技感 */
-        .visual-area { position: relative; width: 220px; height: 220px; margin: 0 auto 30px; }
-        svg { transform: rotate(-90deg); }
-        .circle-track { fill: none; stroke: rgba(0,0,0,0.05); stroke-width: 8; }
+        /* 环形进度 */
+        .visual-area { position: relative; width: 200px; height: 200px; margin: 0 auto 30px; }
+        svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .circle-track { fill: none; stroke: rgba(0,0,0,0.05); stroke-width: 10; }
         .circle-fill {
-            fill: none;
-            stroke: var(--fluent-accent);
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-dasharray: 565;
-            stroke-dashoffset: 565;
+            fill: none; stroke: var(--fluent-accent); stroke-width: 10; stroke-linecap: round;
+            stroke-dasharray: 565; stroke-dashoffset: 565;
             transition: stroke-dashoffset 2s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
 
         .data-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-        .remain-val { font-size: 48px; font-weight: 700; color: #000; line-height: 1; }
-        .remain-label { font-size: 13px; color: #616161; font-weight: 500; margin-top: 5px; }
+        .remain-val { font-size: 44px; font-weight: 700; color: #000; }
+        .remain-label { font-size: 12px; color: #616161; font-weight: 600; }
 
-        /* 统计区块 */
+        /* 数据网格 */
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stat-box {
-            background: rgba(255, 255, 255, 0.4);
-            padding: 16px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.3);
-            transition: all 0.2s;
-        }
-        .stat-box:hover { background: rgba(255, 255, 255, 0.6); transform: translateY(-2px); }
-        .stat-label { font-size: 11px; font-weight: 600; color: #616161; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .stat-num { font-size: 16px; font-weight: 700; color: #000; }
+        .stat-box { background: rgba(255, 255, 255, 0.4); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); }
+        .stat-label { font-size: 11px; color: #616161; font-weight: 600; margin-bottom: 4px; display: block; }
+        .stat-num { font-size: 15px; font-weight: 700; color: #1a1a1a; }
 
-        /* 按钮 - 微软标准样式 */
-        .fluent-btn {
-            width: 100%; margin-top: 20px; padding: 10px;
-            background: var(--fluent-accent); color: white;
-            border: none; border-radius: 4px; font-size: 14px; font-weight: 500;
-            cursor: pointer; transition: 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* 配置面板 - 默认隐藏 */
+        #configPanel {
+            position: absolute; inset: 0; background: #f9f9f9; z-index: 100;
+            padding: 24px; display: none; flex-direction: column;
         }
-        .fluent-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        .fluent-btn:active { transform: scale(0.98); filter: brightness(0.9); }
+        input { 
+            width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 4px; 
+            font-size: 14px; background: white;
+        }
+        .primary-btn {
+            background: var(--fluent-accent); color: white; border: none; padding: 12px;
+            border-radius: 4px; font-weight: 600; cursor: pointer;
+        }
 
         /* 加载动画 */
-        .loading-overlay {
-            position: absolute; inset: 0; background: var(--mica-effect);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 100; transition: 0.5s;
+        #loader {
+            position: absolute; inset: 0; background: var(--mica-bg);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 90;
         }
-        .win-spinner {
-            width: 40px; height: 40px; border: 3px solid rgba(0, 120, 212, 0.2);
-            border-top-color: var(--fluent-accent); border-radius: 50%;
-            animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
+        .spinner { width: 30px; height: 30px; border: 3px solid rgba(0, 120, 212, 0.1); border-top-color: var(--fluent-accent); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .footer { margin-top: 24px; text-align: center; font-size: 11px; color: #616161; }
+        .footer { margin-top: 24px; text-align: center; font-size: 11px; color: #888; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="fluent-card">
-        <div id="loader" class="loading-overlay">
-            <div class="win-spinner"></div>
-            <p style="margin-top: 15px; font-size: 13px; font-weight: 500; color: var(--fluent-accent);">同步 Windows 云端数据...</p>
+        <div id="loader">
+            <div class="spinner"></div>
+            <p style="margin-top:12px; font-size:12px; color:var(--fluent-accent)">正在获取数据...</p>
+        </div>
+
+        <div id="configPanel">
+            <h2 style="font-size: 18px; margin-bottom: 10px;">终端配置</h2>
+            <p style="font-size: 12px; color: #666;">请输入设备号，配置将加密保存在本地浏览器中。</p>
+            <input type="text" id="devInput" placeholder="请输入设备号 (例如: 8681700102)">
+            <button class="primary-btn" onclick="saveConfig()">保存并连接</button>
+            <button style="margin-top:10px; background:none; border:none; color:#666; font-size:12px; cursor:pointer;" onclick="toggleConfig(false)">返回</button>
         </div>
 
         <div class="header">
-            <div class="title-group">
-                <h1>流量仪表盘</h1>
-                <p>设备 ID: 8681700102</p>
+            <div>
+                <h1 id="displayNote">流量概览</h1>
+                <p style="font-size:11px; color:#666;" id="displayID">ID: 未配置</p>
             </div>
-            <div id="statusDot" style="display: flex; align-items: center; font-size: 12px; font-weight: 600;">
-                <span style="width: 8px; height: 8px; background: #107c10; border-radius: 50%; margin-right: 6px;"></span>
-                在线
-            </div>
+            <button class="config-btn" onclick="toggleConfig(true)">⚙️</button>
         </div>
 
         <div class="visual-area">
@@ -166,61 +133,89 @@
                 <span id="usedVal" class="stat-num">-- GB</span>
             </div>
             <div class="stat-box" style="grid-column: span 2;">
-                <span class="stat-label">到期时间</span>
+                <span class="stat-label">服务到期时间</span>
                 <span id="expireVal" class="stat-num">----/--/--</span>
             </div>
         </div>
 
-        <button class="fluent-btn" onclick="location.reload()">同步最新状态</button>
+        <button class="primary-btn" style="width:100%; margin-top:20px;" onclick="fetchData()">刷新状态</button>
     </div>
 
     <div class="footer">
-        <p>© 2026 Eugene. Designed with Fluent Design.</p>
+        <p>By Eugene | 数据仅供参考</p>
     </div>
 </div>
 
 <script>
-    const CONFIG = {
-        devNo: '8681700102',
-        apiUrl: 'http://rang.xuanrangiot.cn/api/card/intelligentDetection'
-    };
+    const API_URL = 'http://rang.xuanrangiot.cn/api/card/intelligentDetection';
 
-    function init() {
-        const callbackName = `fluent_cb_${Date.now()}`;
-        window[callbackName] = function(res) {
-            handleData(res);
-            delete window[callbackName];
+    // 1. 初始化检查本地存储 
+    function checkConfig() {
+        const savedID = localStorage.getItem('user_dev_id'); // [cite: 76, 78]
+        if (!savedID) {
+            toggleConfig(true); // 如果没有配置，弹出配置面板
+            document.getElementById('loader').style.display = 'none';
+        } else {
+            document.getElementById('displayID').innerText = 'ID: ' + savedID;
+            fetchData();
+        }
+    }
+
+    // 2. 保存配置 [cite: 89]
+    function saveConfig() {
+        const input = document.getElementById('devInput').value.trim();
+        if (input) {
+            localStorage.setItem('user_dev_id', input); // [cite: 78, 92]
+            toggleConfig(false);
+            location.reload();
+        } else {
+            alert('请输入有效的设备号');
+        }
+    }
+
+    // 3. 切换面板显示 [cite: 158]
+    function toggleConfig(show) {
+        document.getElementById('configPanel').style.display = show ? 'flex' : 'none';
+    }
+
+    // 4. 获取数据 (内核修复版) [cite: 126]
+    function fetchData() {
+        const devId = localStorage.getItem('user_dev_id');
+        if (!devId) return;
+
+        document.getElementById('loader').style.display = 'flex';
+        document.getElementById('loader').style.opacity = '1';
+
+        const cb = `jsonp_${Date.now()}`;
+        window[cb] = function(res) {
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+
+            if (res.code === 1 && res.data) {
+                const d = res.data;
+                const total = d.totalAmount / 1024 || 0;
+                const remain = (d.remainAmount || d.surplus || 0) / 1024;
+                const used = total - remain;
+                const percent = total > 0 ? (remain / total) : 0;
+
+                // 更新 UI [cite: 137]
+                document.getElementById('totalVal').innerText = total.toFixed(2) + ' GB';
+                document.getElementById('usedVal').innerText = used.toFixed(2) + ' GB';
+                document.getElementById('expireVal').innerText = d.expiretime ? d.expiretime.split(' ')[0] : '长期有效';
+                
+                // 动画效果 [cite: 148]
+                animateValue("remainVal", 0, remain, 1500);
+                document.getElementById('ring').style.strokeDashoffset = 565 - (percent * 565);
+            } else {
+                alert(res.msg || '获取失败，请检查设备号是否正确');
+            }
             document.body.removeChild(script);
+            delete window[cb];
         };
 
         const script = document.createElement('script');
-        script.src = `${CONFIG.apiUrl}?dev_no=${CONFIG.devNo}&callback=${callbackName}`;
+        script.src = `${API_URL}?dev_no=${devId}&callback=${cb}`;
         document.body.appendChild(script);
-    }
-
-    function handleData(res) {
-        document.getElementById('loader').style.opacity = '0';
-        setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-
-        if (res.code === 1 && res.data) {
-            const d = res.data;
-            const total = (d.totalAmount / 1024) || 0;
-            const remain = (d.remainAmount || d.surplus || 0) / 1024;
-            const used = total - remain;
-            const percent = total > 0 ? (remain / total) : 0;
-
-            // UI 更新
-            document.getElementById('totalVal').innerText = total.toFixed(2) + ' GB';
-            document.getElementById('usedVal').innerText = used.toFixed(2) + ' GB';
-            document.getElementById('expireVal').innerText = d.expiretime ? d.expiretime.split(' ')[0] : '--';
-            
-            // 滚动数字
-            animateValue("remainVal", 0, remain, 1500);
-
-            // 进度环 (565 是周长)
-            const ring = document.getElementById('ring');
-            ring.style.strokeDashoffset = 565 - (percent * 565);
-        }
     }
 
     function animateValue(id, start, end, duration) {
@@ -235,7 +230,8 @@
         window.requestAnimationFrame(step);
     }
 
-    window.onload = init;
+    window.onload = checkConfig; // [cite: 154]
 </script>
+
 </body>
 </html>
